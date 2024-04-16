@@ -3,16 +3,12 @@ package network
 import (
 	"codeberg.org/filipmnowak/beaver/internal/tests/groups/network/dns"
 	"codeberg.org/filipmnowak/beaver/internal/tests/groups/network/http"
+	. "codeberg.org/filipmnowak/beaver/internal/tests/groups/network/interfaces"
 )
-
-type NetworkTests interface {
-	Run() error
-	Success() bool
-}
 
 type NetworkTestGroup struct {
 	Name  string
-	Tests []NetworkTests
+	Tests []NetworkTest
 }
 
 func NewNetworkTestGroup() NetworkTestGroup {
@@ -20,7 +16,7 @@ func NewNetworkTestGroup() NetworkTestGroup {
 	dns_tests := dns.AllDNSTests()
 	http_tests := http.AllHTTPTests()
 
-	ts := make([]NetworkTests, len(dns_tests)+len(http_tests))
+	ts := make([]NetworkTest, len(dns_tests)+len(http_tests))
 	for i, d := range dns_tests {
 		ts[i] = d
 	}

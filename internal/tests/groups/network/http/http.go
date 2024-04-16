@@ -1,5 +1,9 @@
 package http
 
+import (
+	. "codeberg.org/filipmnowak/beaver/internal/tests/groups/network/interfaces"
+)
+
 type HTTPTestVariantResult struct {
 	Success bool
 	Err     error
@@ -20,8 +24,11 @@ type HTTPTest struct {
 	Variants []HTTPTestVariant
 }
 
-func (ht HTTPTest) Run() error    { return nil }
-func (ht HTTPTest) Success() bool { return true }
+func (ht HTTPTest) Run() error                      { return nil }
+func (ht HTTPTest) Success() bool                   { return true }
+func (ht HTTPTest) SplitNext() (NetworkTest, error) { return HTTPTest{}, nil }
+func (ht HTTPTest) Merge(NetworkTest) error         { return nil }
+func (ht HTTPTest) MergeAll([]NetworkTest) error    { return nil }
 
 func AllHTTPTests() []HTTPTest {
 	return []HTTPTest{

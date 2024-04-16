@@ -1,5 +1,9 @@
 package dns
 
+import (
+	. "codeberg.org/filipmnowak/beaver/internal/tests/groups/network/interfaces"
+)
+
 type DNSTestVariantResult struct {
 	Success bool
 	Err     error
@@ -20,8 +24,11 @@ type DNSTest struct {
 	Variants []DNSTestVariant
 }
 
-func (dnst DNSTest) Run() error    { return nil }
-func (dnst DNSTest) Success() bool { return true }
+func (dnst DNSTest) Run() error                      { return nil }
+func (dnst DNSTest) Success() bool                   { return true }
+func (dnst DNSTest) SplitNext() (NetworkTest, error) { return DNSTest{}, nil }
+func (dnst DNSTest) Merge(NetworkTest) error         { return nil }
+func (dnst DNSTest) MergeAll([]NetworkTest) error    { return nil }
 
 func AllDNSTests() []DNSTest {
 	return []DNSTest{
