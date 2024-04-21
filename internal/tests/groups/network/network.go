@@ -3,27 +3,27 @@ package network
 import (
 	"codeberg.org/filipmnowak/beaver/internal/tests/groups/network/dns"
 	"codeberg.org/filipmnowak/beaver/internal/tests/groups/network/http"
-	. "codeberg.org/filipmnowak/beaver/internal/tests/groups/network/interfaces"
+	. "codeberg.org/filipmnowak/beaver/internal/tests/interfaces"
 )
 
-type NetworkTestGroup struct {
+type TestGroup struct {
 	Name  string
-	Tests []NetworkTest
+	Tests []Test
 }
 
-func NewNetworkTestGroup() NetworkTestGroup {
+func NewNetworkTestGroup() TestGroup {
 	// https://go.dev/wiki/InterfaceSlice
 	dns_tests := dns.AllDNSTests()
 	http_tests := http.AllHTTPTests()
 
-	ts := make([]NetworkTest, len(dns_tests)+len(http_tests))
+	ts := make([]Test, len(dns_tests)+len(http_tests))
 	for i, d := range dns_tests {
 		ts[i] = d
 	}
 	for i, d := range http_tests {
 		ts[i+len(dns_tests)] = d
 	}
-	return NetworkTestGroup{
+	return TestGroup{
 		Name:  "Network Test Group",
 		Tests: ts,
 	}

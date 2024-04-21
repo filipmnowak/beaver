@@ -2,6 +2,7 @@ package azure
 
 import (
 	"codeberg.org/filipmnowak/beaver/internal/tests/groups/azure/acr"
+	. "codeberg.org/filipmnowak/beaver/internal/tests/interfaces"
 )
 
 type AzureTestGroup struct {

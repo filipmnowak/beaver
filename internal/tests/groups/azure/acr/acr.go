@@ -1,4 +1,8 @@
-package acr 
+package acr
+
+import (
+	. "codeberg.org/filipmnowak/beaver/internal/tests/groups/network/interfaces"
+)
 
 type ACRTestVariantResult struct {
 	Success bool
@@ -21,6 +25,12 @@ type ACRTest struct {
 	Variants    []ACRTestVariant
 }
 
+func (dnst ACRTest) Run() error                      { return nil }
+func (dnst ACRTest) Success() bool                   { return true }
+func (dnst ACRTest) SplitNext() (NetworkTest, error) { return ACRTest{}, nil }
+func (dnst ACRTest) Merge(NetworkTest) error         { return nil }
+func (dnst ACRTest) MergeAll([]NetworkTest) error    { return nil }
+
 func AllACRTests() []ACRTest {
 	return []ACRTest{
 		{
@@ -28,15 +38,15 @@ func AllACRTests() []ACRTest {
 			Cmd:  "/usr/bin/true",
 			Variants: []ACRTestVariant{
 				{
-					Name: "... variant 1",
+					Name:      "... variant 1",
 					Arguments: map[string]any{},
 				},
 				{
-					Name: "... variant 2",
+					Name:      "... variant 2",
 					Arguments: map[string]any{},
 				},
 				{
-					Name: "... variant 3",
+					Name:      "... variant 3",
 					Arguments: map[string]any{},
 				},
 			},
@@ -46,15 +56,15 @@ func AllACRTests() []ACRTest {
 			Cmd:  "/usr/bin/true",
 			Variants: []ACRTestVariant{
 				{
-					Name: "... variant 1",
+					Name:      "... variant 1",
 					Arguments: map[string]any{},
 				},
 				{
-					Name: "... variant 2",
+					Name:      "... variant 2",
 					Arguments: map[string]any{},
 				},
 				{
-					Name: "... variant 3",
+					Name:      "... variant 3",
 					Arguments: map[string]any{},
 				},
 			},
@@ -64,15 +74,15 @@ func AllACRTests() []ACRTest {
 			Cmd:  "/usr/bin/true",
 			Variants: []ACRTestVariant{
 				{
-					Name: "... variant 1",
+					Name:      "... variant 1",
 					Arguments: map[string]any{},
 				},
 				{
-					Name: "... variant 2",
+					Name:      "... variant 2",
 					Arguments: map[string]any{},
 				},
 				{
-					Name: "... variant 3",
+					Name:      "... variant 3",
 					Arguments: map[string]any{},
 				},
 			},
