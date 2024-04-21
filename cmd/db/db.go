@@ -30,9 +30,9 @@ func NewDBInitCmd() *cobra.Command {
 
 func DBInit(cmd *cobra.Command) {
 	dbPath, _ := cmd.Flags().GetString("db-path")
-	dbi := sqlite.NewDB(nil, dbPath, "")
-	dbi.Init()
-	fmt.Printf("%s\n", dbi.InitErrors)
+	db := sqlite.NewDB(nil, dbPath, "")
+	db.Init()
+	fmt.Printf("%s\n", db.InitErrors)
 	input := []map[string]string{
 		{"_group": "network", "test": "resolve A record", "variant": "of something1.org", "key": "/key1", "value": "/abc/def/value/001"},
 		{"_group": "network", "test": "resolve A record", "variant": "of something1.org", "key": "/key1", "value": "/abc/def/value/00x"},
@@ -42,6 +42,6 @@ func DBInit(cmd *cobra.Command) {
 		{"_group": "network", "test": "resolve AAAA record", "variant": "of something4.org", "key": "/key1", "value": "/abc/def/value/001"},
 		{"_group": "network", "test": "resolve AAAA record", "variant": "of something5.org", "key": "/key1", "value": "/abc/def/value/001"},
 	}
-	out, err := dbi.TransactUpserts(input, "test_results", "_group, test, variant, key")
+	out, err := db.TransactUpserts(input, "test_results", "_group, test, variant, key")
 	fmt.Printf("out: \n%s\nerr:\n%s\n", out, err)
 }
