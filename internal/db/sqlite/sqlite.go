@@ -26,8 +26,8 @@ type DB struct {
 	InitErrors  []DBInitErr
 }
 
-func (dbi DB) Success() bool {
-	for _, e := range dbi.InitErrors {
+func (db DB) Success() bool {
+	for _, e := range db.InitErrors {
 		if e.Level == "error" {
 			return false
 		}
@@ -35,18 +35,18 @@ func (dbi DB) Success() bool {
 	return true
 }
 
-func (dbi *DB) Init() bool {
-	if err := os.MkdirAll(filepath.Dir(dbi.DBPath), 0700); err != nil && !os.IsNotExist(err) {
-		dbi.InitErrors = append(dbi.InitErrors, DBInitErr{"error", err})
+func (db *DB) Init() bool {
+	if err := os.MkdirAll(filepath.Dir(db.DBPath), 0700); err != nil && !os.IsNotExist(err) {
+		db.InitErrors = append(db.InitErrors, DBInitErr{"error", err})
 	}
-	if err := os.Rename(dbi.DBPath, dbi.DBPath+"_"+dbFileSuffix()); err != nil && !os.IsNotExist(err) {
-		dbi.InitErrors = append(dbi.InitErrors, DBInitErr{"warning", err})
+	if err := os.Rename(db.DBPath, db.DBPath+"_"+dbFileSuffix()); err != nil && !os.IsNotExist(err) {
+		db.InitErrors = append(db.InitErrors, DBInitErr{"warning", err})
 	}
-	cmd := exec.Command(dbi.SQLITE3Cmd, dbi.DBPath, dbi.InitSQLFunc())
+	cmd := exec.Command(db.SQLITE3Cmd, db.DBPath, db.InitSQLFunc())
 	if err := cmd.Run(); err != nil {
-		dbi.InitErrors = append(dbi.InitErrors, DBInitErr{"error", err})
+		db.InitErrors = append(db.InitErrors, DBInitErr{"error", err})
 	}
-	return dbi.Success()
+	return db.Success()
 }
 
 func TemplateUpserts(values []map[string]string, table, conflictOn string) (string, error) {
@@ -96,22 +96,22 @@ func TemplateUpserts(values []map[string]string, table, conflictOn string) (stri
 	return buffer.String(), nil
 }
 
-func (dbi DB) TransactUpserts(values []map[string]string, table, conflictOn string) (string, error) {
+func (db DB) TransactUpserts(values []map[string]string, table, conflictOn string) (string, error) {
 	upserts, err := TemplateUpserts(values, table, conflictOn)
 	if err != nil {
 		return "", err
 	}
 	transaction := "BEGIN TRANSACTION;\n" + upserts + "COMMIT;\n"
 	var output string
-	if output, err = dbi.RunStatement(transaction, true, false, false); err != nil {
+	if output, err = db.RunStatement(transaction, true, false, false); err != nil {
 		return output, err
 	}
 	return output, nil
 }
 
-func (dbi DB) RunStatement(statement string, rw, unsafe, noJSONOutput bool) (string, error) {
+func (db DB) RunStatement(statement string, rw, unsafe, noJSONOutput bool) (string, error) {
 	flags := []string{
-		dbi.DBPath,
+		db.DBPath,
 		statement,
 	}
 	if !rw {
@@ -123,7 +123,7 @@ func (dbi DB) RunStatement(statement string, rw, unsafe, noJSONOutput bool) (str
 	if !noJSONOutput {
 		flags = append(flags, "--json")
 	}
-	cmd := exec.Command(dbi.SQLITE3Cmd, flags...)
+	cmd := exec.Command(db.SQLITE3Cmd, flags...)
 	output, err := cmd.CombinedOutput()
 	if err != nil {
 		return string(output[:]), err
