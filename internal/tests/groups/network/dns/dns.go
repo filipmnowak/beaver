@@ -5,17 +5,26 @@ import (
 )
 
 type DNSTestVariantResult struct {
-	Success bool
-	Err     error
-	Log     []byte
-	KV      map[string]string
+	Err         error
+	Log         []byte
+	KV          map[string]string
+	SuccessFunc func(TestVariantResult) bool
+}
+
+func (dtvr DNSTestVariantResult) Success() bool {
+	if dtvr.SuccessFunc != nil {
+		return dtvr.SuccessFunc(dtvr)
+	}
+	if dtvr.Err != nil {
+		return false
+	}
+	return true
 }
 
 type DNSTestVariant struct {
 	Name      string
 	Arguments map[string]any
 	Result    DNSTestVariantResult
-	Expected  string
 }
 
 type DNSTest struct {
@@ -24,11 +33,13 @@ type DNSTest struct {
 	Variants []DNSTestVariant
 }
 
-func (dnst DNSTest) Run() error               { return nil }
-func (dnst DNSTest) Success() bool            { return true }
-func (dnst DNSTest) SplitNext() (Test, error) { return DNSTest{}, nil }
-func (dnst DNSTest) Merge(Test) error         { return nil }
-func (dnst DNSTest) MergeAll([]Test) error    { return nil }
+func (dnst DNSTest) Run() error    { return nil }
+func (dnst DNSTest) Success() bool { return true }
+func (dnst *DNSTest) SplitNextVariant() (Test, error) {
+	v := dnst.Variants[0]
+	dnst.Variants = dnst.Variants[1:]
+	return &DNSTest{Variants: []DNSTestVariant{v}}, nil
+}
 
 func AllDNSTests() []DNSTest {
 	return []DNSTest{
