@@ -11,17 +11,17 @@ type TestGroup struct {
 	Tests []Test
 }
 
-func NewNetworkTestGroup() TestGroup {
+func NetworkTestGroup() TestGroup {
 	// https://go.dev/wiki/InterfaceSlice
 	dns_tests := dns.AllDNSTests()
 	http_tests := http.AllHTTPTests()
 
 	ts := make([]Test, len(dns_tests)+len(http_tests))
 	for i, d := range dns_tests {
-		ts[i] = d
+		ts[i] = &d
 	}
 	for i, d := range http_tests {
-		ts[i+len(dns_tests)] = d
+		ts[i+len(dns_tests)] = &d
 	}
 	return TestGroup{
 		Name:  "Network Test Group",

@@ -5,18 +5,21 @@ import (
 	. "codeberg.org/filipmnowak/beaver/internal/tests/interfaces"
 )
 
-type AzureTestGroup struct {
-	name  string
-	tests any
+type TestGroup struct {
+	Name  string
+	Tests []Test
 }
 
-func (azrg AzureTestGroup) Name() string       { return azrg.name }
-func (azrg AzureTestGroup) Tests() any         { return acr.ACRTest{} }
-func (azrg AzureTestGroup) TestResult(any) any { return "" }
+func AzureTestGroup() TestGroup {
+	// https://go.dev/wiki/InterfaceSlice
+	acr_tests := acr.AllACRTests()
 
-func NewAzureTestGroup() AzureTestGroup {
-	return AzureTestGroup{
-		name:  "Azure Test Group",
-		tests: acr.AllACRTests(),
+	ts := make([]Test, len(acr_tests))
+	for i, d := range acr_tests {
+		ts[i] = &d
+	}
+	return TestGroup{
+		Name:  "Network Test Group",
+		Tests: ts,
 	}
 }

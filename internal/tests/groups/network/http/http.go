@@ -24,11 +24,9 @@ type HTTPTest struct {
 	Variants []HTTPTestVariant
 }
 
-func (ht HTTPTest) Run() error               { return nil }
-func (ht HTTPTest) Success() bool            { return true }
-func (ht HTTPTest) SplitNext() (Test, error) { return HTTPTest{}, nil }
-func (ht HTTPTest) Merge(Test) error         { return nil }
-func (ht HTTPTest) MergeAll([]Test) error    { return nil }
+func (ht HTTPTest) Run() error                       { return nil }
+func (ht HTTPTest) Success() bool                    { return true }
+func (ht *HTTPTest) SplitNextVariant() (Test, error) { return &HTTPTest{}, nil }
 
 func AllHTTPTests() []HTTPTest {
 	return []HTTPTest{

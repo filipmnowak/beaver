@@ -1,14 +1,24 @@
 package acr
 
 import (
-	. "codeberg.org/filipmnowak/beaver/internal/tests/groups/network/interfaces"
+	. "codeberg.org/filipmnowak/beaver/internal/tests/interfaces"
 )
 
 type ACRTestVariantResult struct {
-	Success bool
-	Err     error
-	Log     []string
-	KV      map[string]any
+	Err         error
+	Log         []byte
+	KV          map[string]string
+	SuccessFunc func(TestVariantResult) bool
+}
+
+func (acrtv ACRTestVariantResult) Success() bool {
+	if acrtv.SuccessFunc != nil {
+		return acrtv.SuccessFunc(acrtv)
+	}
+	if acrtv.Err != nil {
+		return false
+	}
+	return true
 }
 
 type ACRTestVariant struct {
@@ -25,11 +35,13 @@ type ACRTest struct {
 	Variants    []ACRTestVariant
 }
 
-func (dnst ACRTest) Run() error                      { return nil }
-func (dnst ACRTest) Success() bool                   { return true }
-func (dnst ACRTest) SplitNext() (NetworkTest, error) { return ACRTest{}, nil }
-func (dnst ACRTest) Merge(NetworkTest) error         { return nil }
-func (dnst ACRTest) MergeAll([]NetworkTest) error    { return nil }
+func (dnst ACRTest) Run() error    { return nil }
+func (dnst ACRTest) Success() bool { return true }
+func (dnst *ACRTest) SplitNextVariant() (Test, error) {
+	v := dnst.Variants[0]
+	dnst.Variants = dnst.Variants[1:]
+	return &ACRTest{Variants: []ACRTestVariant{v}}, nil
+}
 
 func AllACRTests() []ACRTest {
 	return []ACRTest{
