@@ -1,5 +1,9 @@
 package tests
 
+import (
+	"slices"
+)
+
 type TestVariantResult struct {
 	Err error
 	Log []byte
@@ -104,10 +108,44 @@ func AllTests() []TestFamily {
 	return ts
 }
 
-func LookupTest(tgs []TestGroup) Test {
-	return Test{}
+func LookupTest(fqn [4]string, tf []TestFamily) *Test {
+	i1 := slices.IndexFunc(tf, func(tf TestFamily) bool {
+		return tf.Name == fqn[0]
+	})
+	if i1 == -1 {
+		return &Test{}
+	}
+	i2 := slices.IndexFunc(tf[i1].Groups, func(tg TestGroup) bool {
+		return tg.Name == fqn[1]
+	})
+	if i2 == -1 {
+		return &Test{}
+	}
+	i3 := slices.IndexFunc(tf[i1].Groups[i2].Tests, func(t Test) bool {
+		return t.Name == fqn[2]
+	})
+	if i3 == -1 {
+		return &Test{}
+	}
+	return &tf[i1].Groups[i2].Tests[i3]
 }
 
-func FlattenTestGroup(tgs []TestGroup) []Test {
-	return []Test{}
+func FlattenTests(tfs []TestFamily) []*Test {
+	tests := []*Test{}
+	for i1, tf := range tfs {
+		for i2, tg := range tf.Groups {
+			for i3, t := range tg.Tests {
+				for i4, v := range t.Variants {
+					_t := Test{
+						FQN:      []string{tf.Name, tg.Name, t.Name, v.Name},
+						Cmd:      tfs[i1].Groups[i2].Tests[i3].Cmd,
+						Name:     tfs[i1].Groups[i2].Tests[i3].Name,
+						Variants: []TestVariant{tfs[i1].Groups[i2].Tests[i3].Variants[i4]},
+					}
+					tests = append(tests, &_t)
+				}
+			}
+		}
+	}
+	return tests
 }
