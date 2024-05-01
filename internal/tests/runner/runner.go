@@ -2,16 +2,23 @@ package runner
 
 import (
 	"codeberg.org/filipmnowak/beaver/internal/db/sqlite"
-	"codeberg.org/filipmnowak/beaver/internal/tests"
+	. "codeberg.org/filipmnowak/beaver/internal/tests"
 )
 
-func runTestGroups(a any, in <-chan any) <-chan any {
+func runTestFamilies(tfs []*TestFamily) <-chan []*Test {
+	return make(<-chan []*Test)
 }
 
-func runTests() {
+func runTestGroups(tgs []*TestGroup) <-chan []*Test {
+	return make(<-chan []*Test)
 }
 
-func runTestVariants() {
+func runTests(ts []*Test) <-chan []*Test {
+	out := make(<-chan []*Test)
+	for i, t := range ts {
+		go func() {
+		}
+	}
 }
 
 func persistResults() {
