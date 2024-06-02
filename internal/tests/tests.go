@@ -29,11 +29,11 @@ func (tv TestVariant) Success() bool {
 
 // FQN: fully qualified `Test` name; if set, it is a slice containing sequence of: `TestFamily.Name`, `TestGroup.Name`, `Test.Name` and `TestVariant.Name`.
 // Name: `Test` name.
-// Cmd: `Test` command, used to execute/run all `Test`'s `TestVariant`s.
+// Cmd: `Test` command, used to execute/run all `Test` `TestVariant`s.
 // Variants: `TestVariant` slice.
-// `Test` has two, composite states:
-// - split: meaning it holds only a single `TestVariant`, and `FQN` is set properly.
-// - primed: meaning it holds it's split and `FQN` is set to `[]string{TestGroup.Name, Test.Name, Test.Variants[0].Name}`
+// `Test` has two, implicit states:
+// - split: meaning it holds only a single `TestVariant`.
+// - primed: `Test` is split and its `FQN` is set to `[]string{TestFamily.Name, TestGroup.Name, Test.Name, Test.Variants[0].Name}`
 type Test struct {
 	FQN      []string
 	Name     string
@@ -56,8 +56,8 @@ func (t Test) IsSplit() bool {
 	return len(t.Variants) == 1
 }
 
-// IsPrimed checks if `Test` is ready for execution.
-func (t Test) IsPrimed() bool {
+// PrimedMaybe checks if `Test` is ready for execution.
+func (t Test) PrimedMaybe() bool {
 	if t.IsSplit() && (len(t.FQN) == 3 && len(t.FQN[0]) != 0 && len(t.FQN[1]) != 0 && len(t.FQN[2]) != 0) {
 		return true
 	}
