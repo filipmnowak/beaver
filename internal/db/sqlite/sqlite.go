@@ -52,8 +52,7 @@ func (db *DB) Init() bool {
 func TemplateUpserts(values []map[string]string, table, conflictOn string) (string, error) {
 	ConflictOn := conflictOn
 	if conflictOn == "" {
-		// in most of the cases tables will have two columns: key and value.
-		ConflictOn = "key"
+		ConflictOn = "family, _group, test, variant, key"
 	}
 
 	cols := make([][]string, len(values))
@@ -110,25 +109,22 @@ func (db DB) TransactUpserts(values []map[string]string, table, conflictOn strin
 }
 
 func (db DB) RunStatement(statement string, rw, unsafe, noJSONOutput bool) (string, error) {
-	flags := []string{
+	sqlite3CmdArgs := []string{
 		db.DBPath,
 		statement,
 	}
 	if !rw {
-		flags = append(flags, "--readonly")
+		sqlite3CmdArgs = append(sqlite3CmdArgs, "--readonly")
 	}
 	if !unsafe {
-		flags = append(flags, "--safe")
+		sqlite3CmdArgs = append(sqlite3CmdArgs, "--safe")
 	}
 	if !noJSONOutput {
-		flags = append(flags, "--json")
+		sqlite3CmdArgs = append(sqlite3CmdArgs, "--json")
 	}
-	cmd := exec.Command(db.SQLITE3Cmd, flags...)
+	cmd := exec.Command(db.SQLITE3Cmd, sqlite3CmdArgs...)
 	output, err := cmd.CombinedOutput()
-	if err != nil {
-		return string(output[:]), err
-	}
-	return string(output[:]), nil
+	return string(output[:]), err
 }
 
 func NewDB(InitSQLFunc func() string, DBPath, SQLITE3Cmd string) DB {
@@ -136,13 +132,14 @@ func NewDB(InitSQLFunc func() string, DBPath, SQLITE3Cmd string) DB {
 	initSQLFunc := func() string {
 		create_table := `
 		CREATE TABLE test_results(
+			family STRING,
 			_group STRING,
 			test STRING,
 			variant STRING,
 			key STRING,
 			value STRING,
 			updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-		PRIMARY KEY (_group, test, variant, key));`
+		PRIMARY KEY (family, _group, test, variant, key));`
 		return create_table
 	}
 	if InitSQLFunc != nil {
