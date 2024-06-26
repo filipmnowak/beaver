@@ -24,6 +24,7 @@ func NewDBInitCmd() *cobra.Command {
 		Short: "Initalize database",
 		Run: func(cmd *cobra.Command, _ []string) {
 			DBInit(cmd)
+			//TestDummy(cmd)
 		},
 	}
 

@@ -1,6 +1,7 @@
 package tests
 
 import (
+	"os/exec"
 	"slices"
 )
 
@@ -41,7 +42,14 @@ type Test struct {
 	Variants []TestVariant
 }
 
-func (t Test) Run() error    { return nil }
+func (t Test) Run() error {
+	cmd := exec.Command(t.Cmd, t.Variants[0].Args...)
+	output, err := cmd.CombinedOutput()
+	t.Variants[0].Result.Err = err
+	t.Variants[0].Result.Log = output
+
+	return nil
+}
 func (t Test) Success() bool { return true }
 
 // SplitNextVariant splits `Test` holding multiple `TestVariant`s, into separate `Test`.
