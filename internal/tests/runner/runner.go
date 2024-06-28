@@ -51,10 +51,10 @@ func RunTests(ts []*Test) []chan *Test {
 	return out
 }
 
-func PersistResults(ch <-chan *Test) error {
+func PersistResults(ch <-chan *Test, dbPath string) error {
 	for t := range ch {
 		// TODO: update in batches, timeout or closed channel
-		db := sqlite.NewDB(nil, "data/beaver.sqlite3", "")
+		db := sqlite.NewDB(nil, dbPath, "")
 		input := []map[string]string{
 			{"family": t.FQN[0], "_group": t.FQN[1], "test": t.FQN[2], "variant": t.FQN[3], "key": "/success", "value": fmt.Sprintf("%s", t.Variants[0].Success())},
 			{"family": t.FQN[0], "_group": t.FQN[1], "test": t.FQN[2], "variant": t.FQN[3], "key": "/log", "value": string(t.Variants[0].Result.Log)},
