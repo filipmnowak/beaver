@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>flaky tests</title>
+    <meta charset="utf-8">
+      <style>
+        .test {
+          grid-auto-columns: fit-content(100%);
+          padding = 0px;
+          /*
+          border-color: red;
+          border-style: solid;
+          */
+          display: grid;
+          column-gap: 5px;
+          row-gap: 5px;
+          grid-template-areas:
+            "tn  .  .  ."
+            ".   p1 p2 p3"
+            "tv1 a  b  c"
+            "tv2 d  e  f"
+            "tv3 g  h  i";
+        }
+
+        .vertical-txt {
+          writing-mode: vertical-rl;
+          text-orientation: mixed;
+          height: auto;
+        }
+
+        .square {
+          height: 15px;
+          width: 15px;
+          aspect-ratio: 1/1;
+          display: flex;
+          align-items: center;
+          background-color: #32cd32;
+        }
+
+        .square-txt {
+          padding: 0px;
+        }
+
+        .green {
+          background-color: #32cd32;
+        }
+        .red {
+          background-color: #ff4500;
+        }
+        p {
+          padding: 0px;
+          margin: 0px;
+        }
+      </style>
+  </head>
+  <body>
+        <div class="test">
+          <div style="grid-area: tn;">
+            <p>test 1</p>
+          </div>
+          <div class="vertical-txt" style="grid-area: p1;">
+            <p>pod1</p>
+          </div>
+          <div class="vertical-txt" style="grid-area: p2;">
+            <p>pod2</p>
+          </div>
+          <div class="vertical-txt" style="grid-area: p3;">
+            <p>pod3</p>
+          </div>
+          <div class="square-txt" style="grid-area: tv1;">
+            <p>test variant 1</p>
+          </div>
+          <div class="square-txt" style="grid-area: tv2;">
+            <p>test variant 2</p>
+          </div>
+          <div class="square-txt" style="grid-area: tv3;">
+            <p>test variant 3</p>
+          </div>
+          <div class="square {{index .Assigns.Data 0 0}}" style="grid-area: a;">
+          </div>
+          <div class="square {{index .Assigns.Data 0 1}}" style="grid-area: b;">
+          </div>
+          <div class="square {{index .Assigns.Data 0 2}}" style="grid-area: c;">
+          </div>
+          <div class="square {{index .Assigns.Data 1 0}}" style="grid-area: d;">
+          </div>
+          <div class="square {{index .Assigns.Data 1 1}}" style="grid-area: e;">
+          </div>
+          <div class="square {{index .Assigns.Data 1 2}}" style="grid-area: f;">
+          </div>
+          <div class="square {{index .Assigns.Data 2 0}}" style="grid-area: g;">
+          </div>
+          <div class="square {{index .Assigns.Data 2 1}}" style="grid-area: h;">
+          </div>
+          <div class="square {{index .Assigns.Data 2 2}}" style="grid-area: i;">
+          </div>
+        </div>
+  </body>
+  <script type="text/javascript" src="/live.js"></script>    
+</html>
