@@ -2,12 +2,15 @@ package dashboard
 
 import (
 	"context"
-	"github.com/jfyne/live"
+	"fmt"
 	"html/template"
 	"log"
 	"math/rand/v2"
+	"net"
 	"net/http"
 	"time"
+
+	"github.com/jfyne/live"
 )
 
 const tick = "tick"
@@ -63,8 +66,8 @@ func (e *CronEngine) Start() {
 	}()
 }
 
-func main() {
-	t, err := template.ParseFiles("view.html")
+func Start(templatePath string, ip net.IP, port uint32) {
+	t, err := template.ParseFiles(templatePath)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -90,5 +93,5 @@ func main() {
 	http.Handle("/", ce)
 	http.Handle("/live.js", live.Javascript{})
 	http.Handle("/auto.js.map", live.JavascriptMap{})
-	http.ListenAndServe(":8080", nil)
+	http.ListenAndServe(ip.String()+":"+fmt.Sprintf("%v", port), nil)
 }

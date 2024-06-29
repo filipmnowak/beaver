@@ -20,7 +20,9 @@ func NewTestCmd() *cobra.Command {
 
 	defaultTestTimeout, _ := time.ParseDuration("15s")
 
-	cmd.PersistentFlags().String("db-path", "data/beaver.sqlite3", "filesystem path to SQLite DB")
+	cmd.PersistentFlags().String("readiness-endpoint", "/ready", "app readiness endpoint")
+	cmd.PersistentFlags().String("health-endpoint", "/health", "app health/status endpoint")
+	cmd.PersistentFlags().StringP("db-path", "d", "data/beaver.sqlite3", "filesystem path to SQLite DB")
 	cmd.PersistentFlags().DurationP("test-timeout", "t", defaultTestTimeout, "timeout set globally for all of the tests")
 	cmd.PersistentFlags().UintP("test-buffer-size", "u", 32, "test results channel buffer size")
 	cmd.PersistentFlags().UintP("test-batch-size", "a", 16, "maximum tests executed at the same time")
