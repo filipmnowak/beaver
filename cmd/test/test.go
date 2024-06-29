@@ -4,6 +4,7 @@ import (
 	"net"
 	"time"
 
+	"codeberg.org/filipmnowak/beaver/internal/dashboard"
 	. "codeberg.org/filipmnowak/beaver/internal/tests"
 	. "codeberg.org/filipmnowak/beaver/internal/tests/runner"
 	"github.com/spf13/cobra"
@@ -15,6 +16,7 @@ func NewTestCmd() *cobra.Command {
 		Short: "infra testing-related commands",
 	}
 	cmd.AddCommand(NewTestRunOnceCmd())
+	cmd.AddCommand(NewTestServeCmd())
 	cmd.AddCommand(NewTestRunForeverCmd())
 	cmd.AddCommand(NewTestRunForeverAndServeCmd())
 
@@ -49,6 +51,29 @@ func TestRunOnce(cmd *cobra.Command) {
 	PersistResults(ch, dbPath)
 }
 
+func NewTestServeCmd() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "serve",
+		Short: "Serve test results dashboard.",
+		Run: func(cmd *cobra.Command, _ []string) {
+			TestServe(cmd)
+		},
+	}
+	cmd.Flags().Uint32P("port", "p", 8080, "dashboard listening TCP port")
+	cmd.Flags().IPP("ip", "i", net.IP{0, 0, 0, 0}, "dashboard listening IPv4 address")
+	cmd.PersistentFlags().StringP("dashboard-template-path", "s", "web/template/dashboard.html", "results dashboard template path")
+
+	return cmd
+}
+
+func TestServe(cmd *cobra.Command) {
+	ip, _ := cmd.Flags().GetIP("ip")
+	port, _ := cmd.Flags().GetUint32("port")
+	dashboardTemplate, _ := cmd.Flags().GetString("dashboard-template-path")
+
+	dashboard.Start(dashboardTemplate, ip, port)
+}
+
 func NewTestRunForeverCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "run-forever",
@@ -80,6 +105,7 @@ func NewTestRunForeverAndServeCmd() *cobra.Command {
 
 	cmd.Flags().Uint32P("port", "p", 8080, "dashboard listening TCP port")
 	cmd.Flags().IPP("ip", "i", net.IP{0, 0, 0, 0}, "dashboard listening IPv4 address")
+	cmd.PersistentFlags().StringP("dashboard-template-path", "s", "web/template/dashboard.html", "results dashboard template path")
 
 	return cmd
 }
