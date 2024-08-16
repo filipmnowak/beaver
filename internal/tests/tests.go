@@ -96,15 +96,15 @@ func AllTests() []TestFamily {
 							Variants: []TestVariant{
 								{
 									Name: "... of something.example.com",
-									Args: []string{"A", "something.example.com"},
+									Args: []string{"+short", "A", "something.example.com"},
 								},
 								{
 									Name: "... of xyz.example.com",
-									Args: []string{"A", "xyz.example.com"},
+									Args: []string{"+short", "A", "xyz.example.com"},
 								},
 								{
 									Name: "... of abc.example.com",
-									Args: []string{"A", "abc.example.com"},
+									Args: []string{"+short", "A", "abc.example.com"},
 								},
 							},
 						},

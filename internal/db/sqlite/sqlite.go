@@ -2,6 +2,7 @@ package sqlite
 
 import (
 	"bytes"
+	"fmt"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -123,6 +124,7 @@ func (db DB) RunStatement(statement string, rw, unsafe, noJSONOutput bool) (stri
 		sqlite3CmdArgs = append(sqlite3CmdArgs, "--json")
 	}
 	cmd := exec.Command(db.SQLITE3Cmd, sqlite3CmdArgs...)
+	fmt.Printf("%s\n", statement)
 	output, err := cmd.CombinedOutput()
 	return string(output[:]), err
 }
