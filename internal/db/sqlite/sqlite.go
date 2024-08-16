@@ -74,7 +74,7 @@ func TemplateUpserts(values []map[string]string, table, conflictOn string) (stri
 	t, err := template.New("t").Parse(
 		`{{range $i1, $v := .Cols}}
 		INSERT INTO {{$.Table}}({{index $._Cols $i1}}) VALUES({{index $._Vals $i1}})
-		ON CONFLICT({{$.ConflictOn}}) DO UPDATE SET ({{index $._Cols $i1}}) = ({{index $._Vals $i1}});
+		ON CONFLICT({{$.ConflictOn}}) DO UPDATE SET ({{index $._Cols $i1}}, updated_at) = ({{index $._Vals $i1}}, CURRENT_TIMESTAMP);
 		{{end}}
 		`,
 	)
