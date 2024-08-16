@@ -8,7 +8,6 @@ import (
 type TestVariantResult struct {
 	Err error
 	Log []byte
-	KV  map[string]string
 }
 
 type TestVariant struct {
@@ -16,6 +15,7 @@ type TestVariant struct {
 	Args        []string
 	Result      TestVariantResult
 	SuccessFunc func(TestVariant) bool
+	ErrorFunc func(TestVariant) string
 }
 
 func (tv TestVariant) Success() bool {
@@ -26,6 +26,16 @@ func (tv TestVariant) Success() bool {
 		return false
 	}
 	return true
+}
+
+func (tv TestVariant) Error() string {
+	if tv.SuccessFunc != nil {
+		return tv.ErrorFunc(tv)
+	}
+	if tv.Result.Err != nil {
+		return tv.Result.Err.Error()
+	}
+	return ""
 }
 
 // FQN: fully qualified `Test` name; if set, it is a slice containing sequence of: `TestFamily.Name`, `TestGroup.Name`, `Test.Name` and `TestVariant.Name`.
@@ -105,6 +115,21 @@ func AllTests() []TestFamily {
 								{
 									Name: "... of abc.example.com",
 									Args: []string{"+short", "A", "abc.example.com"},
+								},
+							},
+						},
+					},
+				},
+				{
+					Name: "Time",
+					Tests: []Test{
+						{
+							Name: "Print date",
+							Cmd:  "/usr/bin/date",
+							Variants: []TestVariant{
+								{
+									Name: "... in seconds",
+									Args: []string{"+%s"},
 								},
 							},
 						},

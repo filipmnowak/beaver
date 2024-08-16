@@ -59,7 +59,7 @@ func PersistResults(ch <-chan *Test, dbPath string) error {
 		input := []map[string]string{
 			{"family": t.FQN[0], "_group": t.FQN[1], "test": t.FQN[2], "variant": t.FQN[3], "key": "/success", "value": strconv.FormatBool(t.Variants[0].Success())},
 			{"family": t.FQN[0], "_group": t.FQN[1], "test": t.FQN[2], "variant": t.FQN[3], "key": "/log", "value": string(t.Variants[0].Result.Log)},
-			{"family": t.FQN[0], "_group": t.FQN[1], "test": t.FQN[2], "variant": t.FQN[3], "key": "/error", "value": t.Variants[0].Result.Err.Error()},
+			{"family": t.FQN[0], "_group": t.FQN[1], "test": t.FQN[2], "variant": t.FQN[3], "key": "/error", "value": t.Variants[0].Error()},
 		}
 		out, err := db.TransactUpserts(input, "test_results", "family, _group, test, variant, key")
 		fmt.Printf("out: %s\n", out)
